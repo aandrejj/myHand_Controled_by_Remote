@@ -155,7 +155,7 @@ void setup() {
   //delay(500);
   //Init_PinModes();
   previous_state = 0;
-  delay(30000);
+  delay(1000);
   Serial.println("setup: before lcd.clear");
   lcd.clear();
 
