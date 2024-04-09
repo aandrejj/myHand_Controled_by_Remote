@@ -159,14 +159,14 @@ void setup() {
   Serial.println("setup: before lcd.clear");
   lcd.clear();
 
-  /*
+  
   Serial.println("setup:: Servo Initialization started");
 	delay(200);
   pwm.begin(); //pwm.begin(0);   0 = driver_ID
   pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
 	Serial.println("setup: Servos on PCA9685  attached");
   delay(20);
-  */
+  
 }
 //----------------------------BT_to_serial_prepare-----------------------------------------
 void BT_to_serial_prepare() {
@@ -250,7 +250,7 @@ void loop() {
       if (currentMillis - previousServoMillis >= servoInterval) {  // start timed event for Servos  (200 ms)
         previousServoMillis = currentMillis;
 
-        /*
+        
         pwm.setPWM( 0, 0, servo01_Angle);  //Servo 0
         pwm.setPWM( 1, 0, servo02_Angle);  //Servo 1
         pwm.setPWM( 2, 0, servo03_Angle);  //Servo 2
@@ -271,7 +271,7 @@ void loop() {
         pwm.setPWM(13, 0, servo05_Angle);  //Servo 4
         pwm.setPWM(14, 0, servo06_Angle);  //Servo 3
         pwm.setPWM(15, 0, servo07_Angle);  //Servo 4
-        */
+        
       }
 
 }
