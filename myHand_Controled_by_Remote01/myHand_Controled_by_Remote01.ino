@@ -74,6 +74,7 @@ int axis6;
 
 int mode;
 int count;
+int noDataCount;
 
 int menuFlag = 0;        
 
@@ -159,14 +160,14 @@ void setup() {
   Serial.println("setup: before lcd.clear");
   lcd.clear();
 
-  /*
+  
   Serial.println("setup:: Servo Initialization started");
 	delay(200);
   pwm.begin(); //pwm.begin(0);   0 = driver_ID
   pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
 	Serial.println("setup: Servos on PCA9685  attached");
   delay(20);
-  */
+  
 }
 //----------------------------BT_to_serial_prepare-----------------------------------------
 void BT_to_serial_prepare() {
@@ -211,12 +212,19 @@ void loop() {
                               ", RY:"+String(mydata_remote.stick2_Y)+
                               ", count:"+String(count));
                               */
+              //if(showForm == form_ShowMeasuredData){
+                String btnsString = "Btn"+String(mydata_remote.menuDown)+""+String(mydata_remote.menuUp)+""+String(mydata_remote.Select)+""+String(mydata_remote.toggleBottom)+""+String(mydata_remote.toggleTop)+""+"X";
+                btnsString = btnsString +" Nav"+ String(mydata_remote.navKeyUp)+""+String(mydata_remote.navKeyDown)+""+String(mydata_remote.navKeyLeft)+""+String(mydata_remote.navKeyRight)+""+String(mydata_remote.navKeyMiddle)+""+String(mydata_remote.navKeySet)+""+String(mydata_remote.navKeyReset);
+
+                myLcd.showMeasuredDateScreen(mydata_remote.stick1_X, mydata_remote.stick2_X, mydata_remote.stick1_Y, mydata_remote.stick2_Y, btnsString, "count:"+String(count)+" mode:"+String(mode));
+                //myLcd.showMeasuredDateScreen2(leftJoystick_X,leftJoystick_Y, rightJoystick_X, rightJoystick_Y, mydata_send.index_finger_knuckle_right, mydata_send.pinky_knuckle_right, mydata_send.index_finger_fingertip,mydata_send.index_finger_knuckle_left, btnsString, "");
+              //}
 
               servo01_constrained = constrain(mydata_remote.stick1_X, 0, 1023);
               servo02_constrained = constrain(mydata_remote.stick1_Y, 0, 1023);
               servo03_constrained = constrain(mydata_remote.stick2_X, 0, 1023);
               servo04_constrained = constrain(mydata_remote.stick2_Y, 0, 1023);
-              
+
               servo01_constrained = map(servo01_constrained, 0, 1023, SERVO_MIN, SERVO_MAX);
               servo02_constrained = map(servo02_constrained, 0, 1023, SERVO_MIN, SERVO_MAX);
               servo03_constrained = map(servo03_constrained, 0, 1023, SERVO_MIN, SERVO_MAX);
@@ -240,17 +248,32 @@ void loop() {
                             ", count:"+String(count));
               
              // end of receive data
-            } else if(currentMillis - previousSafetyMillis > 200) {         // safeties
-            //Serial.Println("No Data")
-            }
 
-            count = count+1;                                              // update count for remote monitoring
+              count = count+1;                                              // update count for remote monitoring
+              /*
+              lcd.setCursor(0,2);
+              lcd.print(count);
+              lcd.setCursor(0,3);
+              lcd.print("Mode - ");
+              lcd.setCursor(7,3);
+              lcd.print(mode);
+              */
+            } else if(currentMillis - previousSafetyMillis > 200) {         // safeties
+              noDataCount = noDataCount+1;                                              // update count for remote monitoring
+              lcd.setCursor(0,0);
+              lcd.print("!"+String(noDataCount)+"! No Data ");
+              //Serial.println("No Data");
+              //lcd.print(" No Data ");
+            }
+            //count = count+1;                                              // update count for remote monitoring
+
+            
        }  // end of timed event Receive/Send
 
       if (currentMillis - previousServoMillis >= servoInterval) {  // start timed event for Servos  (200 ms)
         previousServoMillis = currentMillis;
 
-        /*
+        
         pwm.setPWM( 0, 0, servo01_Angle);  //Servo 0
         pwm.setPWM( 1, 0, servo02_Angle);  //Servo 1
         pwm.setPWM( 2, 0, servo03_Angle);  //Servo 2
@@ -271,7 +294,7 @@ void loop() {
         pwm.setPWM(13, 0, servo05_Angle);  //Servo 4
         pwm.setPWM(14, 0, servo06_Angle);  //Servo 3
         pwm.setPWM(15, 0, servo07_Angle);  //Servo 4
-        */
+        
       }
 
 }
