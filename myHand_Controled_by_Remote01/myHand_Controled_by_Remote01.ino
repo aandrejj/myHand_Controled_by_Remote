@@ -17,102 +17,14 @@
 #include "MyLcd_SplashScreen.h"
 #include "FormData.h"
 #include "constants.h"
-
+#include "Servo_Min_Max.h"
+#include "myHand_Controled_by_Remote.h"
 
 //create object
 EasyTransfer ET1;   // send serial
 EasyTransfer ET2;   // rec serial
 
 //https://robojax.com/learn/arduino/?vid=robojax_PCA9685-V1
-#define SERVO_MIN   135                // https://www.arduino.cc/reference/en/libraries/servo/writemicroseconds/
-#define SERVO_MAX   615                // value of 135 is fully counter-clockwise, 615 is fully clockwise.
-//----------------------------------
-#define SERVO_MIN_Pinky_Right    135
-#define SERVO_MAX_Pinky_Right   615
-
-#define SERVO_MIN_Pinky_Center   135
-#define SERVO_MAX_Pinky_Center   615
-
-#define SERVO_MIN_Pinky_Left   135
-#define SERVO_MAX_Pinky_Left   615
-//---------------------------------
-#define SERVO_MIN_Ring_Right   135
-#define SERVO_MAX_Ring_Right   615
-
-#define SERVO_MIN_Ring_Center   135
-#define SERVO_MAX_Ring_Center   615
-
-#define SERVO_MIN_Ring_Left   135
-#define SERVO_MAX_Ring_Left   615
-//----------------------------------
-#define SERVO_MIN_Middle_Right   135
-#define SERVO_MAX_Middle_Right   615
-
-#define SERVO_MIN_Middle_Center   135
-#define SERVO_MAX_Middle_Center   615
-
-#define SERVO_MIN_Middle_Left   135
-#define SERVO_MAX_Middle_Left   615
-//------------------------------------
-#define SERVO_MIN_Index_Right   135
-#define SERVO_MAX_Index_Right   615
-
-#define SERVO_MIN_Index_Center   135
-#define SERVO_MAX_Index_Center   615
-
-#define SERVO_MIN_Index_Left   135
-#define SERVO_MAX_Index_Left   615
-//----------------------------------
-#define SERVO_MIN_Thumb_Right   135
-#define SERVO_MAX_Thumb_Right   615
-
-#define SERVO_MIN_Thumb_Center   135
-#define SERVO_MAX_Thumb_Center   615
-
-#define SERVO_MIN_Thumb_Rotate   135
-#define SERVO_MAX_Thumb_Rotate   615
-
-#define SERVO_MIN_Thumb_Left   135
-#define SERVO_MAX_Thumb_Left   615
-
-
-// knee calcs
-#define DIGITLENGTH 330L    // length of each top/bottom leg
-#define KNEEROD 180L       // length of push rod
-#define KNEEROD2 94L        // other side of push rod triangle
-#define KNEEACTANGLE 15L   // angle between actuator and upp leg joint
-
-// Outcomment line below for HM-10, HM-19 etc
-//#define HIGHSPEED   // Most modules are only 9600, although you can reconfigure this
-#define EN_PIN_HIGH   // You can use this for HC-05 so you don't have to hold the small button on power-up to get to AT-mode
-
-#ifdef HIGHSPEED
-  #define Baud 38400   // Serial monitor
-  #define BTBaud 38400 // There is only one speed for configuring HC-05, and that is 38400.
-#else
-  #define Baud 9600    // Serial monitor
-  #define BTBaud 9600  // HM-10, HM-19 etc
-#endif
-
-
-#define STATE 11
-#define BLUETOOTH_RX 9  // Bluetooth RX -> Arduino D9
-#define BLUETOOTH_TX 10 // Bluetooth TX -> Arduino D10
-//#define GND 13
-//#define Vcc 12
-#define ENABLE 8
-
-/*
-double legLength;           // required overall leg length
-double kneeAngle;           // the actual angle of the knee between top and bottom sections
-double kneeAngle2;          // angle between bottom of leg and actuator
-double kneeAngle2a;          // angle between bottom of leg and actuator
-double kneeAngle3;          // other angle
-double kneeAngle3a;          // other angle
-double kneeAngle4;          // other angle.
-double kneeAngle4a;          // other angle
-double kneeActuator;        // calculated length of actuator from joint
-*/
 
 int axis1;
 int axis2;
@@ -254,13 +166,6 @@ void loop() {
                 mydata_send.count = count;
 
                 ET1.sendData();                                           // send data back to remote       
-              /*  
-                Serial.println( "LX:"+String(mydata_remote.stick1_X)+
-                              ", LY:"+String(mydata_remote.stick1_Y)+
-                              ", RX:"+String(mydata_remote.stick2_X)+
-                              ", RY:"+String(mydata_remote.stick2_Y)+
-                              ", count:"+String(count));
-              */                
               //if(showForm == form_ShowMeasuredData){
 
                 String btnsString = "";//"Btn"+String(mydata_remote.menuDown)+""+String(mydata_remote.menuUp)+""+String(mydata_remote.Select)+""+String(mydata_remote.toggleBottom)+""+String(mydata_remote.toggleTop)+""+"X";
@@ -290,9 +195,6 @@ void loop() {
               servo06_Angle = map(servo03_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
               servo07_Angle = map(servo01_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
 
-              //servo08_Angle = map(servo02_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
-              //servo09_Angle = map(servo03_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
-              
 
               /*
               Serial.println(   "LX:"+String(mydata_remote.stick1_X)+ ", S1:" + String(servo01_Angle) +
@@ -304,29 +206,17 @@ void loop() {
              // end of receive data
 
               count = count+1;                                              // update count for remote monitoring
-              /*
-              lcd.setCursor(0,2);
-              lcd.print(count);
-              lcd.setCursor(0,3);
-              lcd.print("Mode - ");
-              lcd.setCursor(7,3);
-              lcd.print(mode);
-              */
+
             } else if(currentMillis - previousSafetyMillis > 200) {         // safeties
               noDataCount = noDataCount+1;                                              // update count for remote monitoring
               lcd.setCursor(0,0);
               lcd.print("!"+String(noDataCount)+"! No Data ");
-              //Serial.println("No Data");
-              //lcd.print(" No Data ");
             }
             //count = count+1;                                              // update count for remote monitoring
-
-            
        }  // end of timed event Receive/Send
 
       if (currentMillis - previousServoMillis >= servoInterval) {  // start timed event for Servos  (200 ms)
         previousServoMillis = currentMillis;
-
         
         pwm.setPWM(15, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Pinky_Right, SERVO_MAX_Pinky_Right));  //Servo 0
         pwm.setPWM(14, 0, map(servo02_Angle, 0, 1023, SERVO_MIN_Pinky_Center, SERVO_MAX_Pinky_Center));  //Servo 1
