@@ -26,6 +26,55 @@ EasyTransfer ET2;   // rec serial
 //https://robojax.com/learn/arduino/?vid=robojax_PCA9685-V1
 #define SERVO_MIN   135                // https://www.arduino.cc/reference/en/libraries/servo/writemicroseconds/
 #define SERVO_MAX   615                // value of 135 is fully counter-clockwise, 615 is fully clockwise.
+//----------------------------------
+#define SERVO_MIN_Pinky_Right    135
+#define SERVO_MAX_Pinky_Right   615
+
+#define SERVO_MIN_Pinky_Center   135
+#define SERVO_MAX_Pinky_Center   615
+
+#define SERVO_MIN_Pinky_Left   135
+#define SERVO_MAX_Pinky_Left   615
+//---------------------------------
+#define SERVO_MIN_Ring_Right   135
+#define SERVO_MAX_Ring_Right   615
+
+#define SERVO_MIN_Ring_Center   135
+#define SERVO_MAX_Ring_Center   615
+
+#define SERVO_MIN_Ring_Left   135
+#define SERVO_MAX_Ring_Left   615
+//----------------------------------
+#define SERVO_MIN_Middle_Right   135
+#define SERVO_MAX_Middle_Right   615
+
+#define SERVO_MIN_Middle_Center   135
+#define SERVO_MAX_Middle_Center   615
+
+#define SERVO_MIN_Middle_Left   135
+#define SERVO_MAX_Middle_Left   615
+//------------------------------------
+#define SERVO_MIN_Index_Right   135
+#define SERVO_MAX_Index_Right   615
+
+#define SERVO_MIN_Index_Center   135
+#define SERVO_MAX_Index_Center   615
+
+#define SERVO_MIN_Index_Left   135
+#define SERVO_MAX_Index_Left   615
+//----------------------------------
+#define SERVO_MIN_Thumb_Right   135
+#define SERVO_MAX_Thumb_Right   615
+
+#define SERVO_MIN_Thumb_Center   135
+#define SERVO_MAX_Thumb_Center   615
+
+#define SERVO_MIN_Thumb_Rotate   135
+#define SERVO_MAX_Thumb_Rotate   615
+
+#define SERVO_MIN_Thumb_Left   135
+#define SERVO_MAX_Thumb_Left   615
+
 
 // knee calcs
 #define DIGITLENGTH 330L    // length of each top/bottom leg
@@ -205,16 +254,17 @@ void loop() {
                 mydata_send.count = count;
 
                 ET1.sendData();                                           // send data back to remote       
-                /*
+              /*  
                 Serial.println( "LX:"+String(mydata_remote.stick1_X)+
                               ", LY:"+String(mydata_remote.stick1_Y)+
                               ", RX:"+String(mydata_remote.stick2_X)+
                               ", RY:"+String(mydata_remote.stick2_Y)+
                               ", count:"+String(count));
-                              */
+              */                
               //if(showForm == form_ShowMeasuredData){
-                String btnsString = "Btn"+String(mydata_remote.menuDown)+""+String(mydata_remote.menuUp)+""+String(mydata_remote.Select)+""+String(mydata_remote.toggleBottom)+""+String(mydata_remote.toggleTop)+""+"X";
-                btnsString = btnsString +" Nav"+ String(mydata_remote.navKeyUp)+""+String(mydata_remote.navKeyDown)+""+String(mydata_remote.navKeyLeft)+""+String(mydata_remote.navKeyRight)+""+String(mydata_remote.navKeyMiddle)+""+String(mydata_remote.navKeySet)+""+String(mydata_remote.navKeyReset);
+
+                String btnsString = "";//"Btn"+String(mydata_remote.menuDown)+""+String(mydata_remote.menuUp)+""+String(mydata_remote.Select)+""+String(mydata_remote.toggleBottom)+""+String(mydata_remote.toggleTop)+""+"X";
+                //btnsString = btnsString +" Nav"+ String(mydata_remote.navKeyUp)+""+String(mydata_remote.navKeyDown)+""+String(mydata_remote.navKeyLeft)+""+String(mydata_remote.navKeyRight)+""+String(mydata_remote.navKeyMiddle)+""+String(mydata_remote.navKeySet)+""+String(mydata_remote.navKeyReset);
 
                 myLcd.showMeasuredDateScreen(mydata_remote.stick1_X, mydata_remote.stick2_X, mydata_remote.stick1_Y, mydata_remote.stick2_Y, btnsString, "count:"+String(count)+" mode:"+String(mode));
                 //myLcd.showMeasuredDateScreen2(leftJoystick_X,leftJoystick_Y, rightJoystick_X, rightJoystick_Y, mydata_send.index_finger_knuckle_right, mydata_send.pinky_knuckle_right, mydata_send.index_finger_fingertip,mydata_send.index_finger_knuckle_left, btnsString, "");
@@ -225,28 +275,32 @@ void loop() {
               servo03_constrained = constrain(mydata_remote.stick2_X, 0, 1023);
               servo04_constrained = constrain(mydata_remote.stick2_Y, 0, 1023);
 
-              servo01_constrained = map(servo01_constrained, 0, 1023, SERVO_MIN, SERVO_MAX);
-              servo02_constrained = map(servo02_constrained, 0, 1023, SERVO_MIN, SERVO_MAX);
+              servo01_constrained = map(servo01_constrained, 1023, 0, SERVO_MIN, SERVO_MAX);  //Inverted
+              servo02_constrained = map(servo02_constrained, 1023, 0, SERVO_MIN, SERVO_MAX);  //Inverted
               servo03_constrained = map(servo03_constrained, 0, 1023, SERVO_MIN, SERVO_MAX);
-              servo04_constrained = map(servo04_constrained, 0, 1023, SERVO_MIN, SERVO_MAX);
-              
+              servo04_constrained = map(servo04_constrained, 0, 1023, SERVO_MIN, SERVO_MAX);  //Inverted
+
+
               servo01_Angle = (servo01_constrained + servo02_constrained)/2;
-              servo02_Angle = (servo01_constrained + (1023 - servo02_constrained))/2;
-              servo03_Angle =  servo02_constrained;
+              servo02_Angle =  servo04_constrained;
+              servo03_Angle = (servo01_constrained + (1023 - servo02_constrained))/2;
 
               servo04_Angle = map(servo01_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
               servo05_Angle = map(servo02_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
               servo06_Angle = map(servo03_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
-              servo07_Angle = map(servo04_constrained, 0, 1023, SERVO_MIN, SERVO_MAX);
+              servo07_Angle = map(servo01_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
+
+              //servo08_Angle = map(servo02_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
+              //servo09_Angle = map(servo03_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
               
 
-              
+              /*
               Serial.println(   "LX:"+String(mydata_remote.stick1_X)+ ", S1:" + String(servo01_Angle) +
                             ",   LY:"+String(mydata_remote.stick1_Y       )+ ", S2:" + String(servo02_Angle) +
                             ",   RX:"+String(mydata_remote.stick2_X    )+ ", S3:" + String(servo03_Angle) +
                             ",   RY:"+String(mydata_remote.stick2_Y )+ ", S4:" + String(servo04_Angle) +
                             ", count:"+String(count));
-              
+              */
              // end of receive data
 
               count = count+1;                                              // update count for remote monitoring
@@ -274,26 +328,26 @@ void loop() {
         previousServoMillis = currentMillis;
 
         
-        pwm.setPWM( 0, 0, servo01_Angle);  //Servo 0
-        pwm.setPWM( 1, 0, servo02_Angle);  //Servo 1
-        pwm.setPWM( 2, 0, servo03_Angle);  //Servo 2
+        pwm.setPWM(15, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Pinky_Right, SERVO_MAX_Pinky_Right));  //Servo 0
+        pwm.setPWM(14, 0, map(servo02_Angle, 0, 1023, SERVO_MIN_Pinky_Center, SERVO_MAX_Pinky_Center));  //Servo 1
+        pwm.setPWM(13, 0, map(servo03_Angle, 0, 1023, SERVO_MIN_Pinky_Left, SERVO_MAX_Pinky_Left));  //Servo 2
 
-        pwm.setPWM( 3, 0, servo01_Angle);  //Servo 0
-        pwm.setPWM( 4, 0, servo02_Angle);  //Servo 1
-        pwm.setPWM( 5, 0, servo03_Angle);  //Servo 2
+        pwm.setPWM(12, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Ring_Right, SERVO_MAX_Ring_Right));  //Servo 0
+        pwm.setPWM(11, 0, map(servo02_Angle, 0, 1023, SERVO_MIN_Ring_Center, SERVO_MAX_Ring_Center));  //Servo 1
+        pwm.setPWM(10, 0, map(servo03_Angle, 0, 1023, SERVO_MIN_Ring_Left, SERVO_MAX_Ring_Left));  //Servo 2
 
-        pwm.setPWM( 6, 0, servo01_Angle);  //Servo 0
-        pwm.setPWM( 7, 0, servo02_Angle);  //Servo 1
-        pwm.setPWM( 8, 0, servo03_Angle);  //Servo 2
+        pwm.setPWM( 9, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Middle_Right, SERVO_MAX_Middle_Right));  //Servo 0
+        pwm.setPWM( 8, 0, map(servo02_Angle, 0, 1023, SERVO_MIN_Middle_Center, SERVO_MAX_Middle_Center));  //Servo 1
+        pwm.setPWM( 7, 0, map(servo03_Angle, 0, 1023, SERVO_MIN_Middle_Left, SERVO_MAX_Middle_Left));  //Servo 2
 
-        pwm.setPWM( 9, 0, servo01_Angle);  //Servo 0
-        pwm.setPWM(10, 0, servo02_Angle);  //Servo 1
-        pwm.setPWM(11, 0, servo03_Angle);  //Servo 2
+        pwm.setPWM( 6, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Index_Right, SERVO_MAX_Index_Right));  //Servo 0
+        pwm.setPWM( 5, 0, map(servo02_Angle, 0, 1023, SERVO_MIN_Index_Center, SERVO_MAX_Index_Center));  //Servo 1
+        pwm.setPWM( 4, 0, map(servo03_Angle, 0, 1023, SERVO_MIN_Index_Left, SERVO_MAX_Index_Left));  //Servo 2
 
-        pwm.setPWM(12, 0, servo04_Angle);  //Servo 3
-        pwm.setPWM(13, 0, servo05_Angle);  //Servo 4
-        pwm.setPWM(14, 0, servo06_Angle);  //Servo 3
-        pwm.setPWM(15, 0, servo07_Angle);  //Servo 4
+        pwm.setPWM( 3, 0, map(servo04_Angle, 0, 1023, SERVO_MIN_Thumb_Right, SERVO_MAX_Thumb_Right));  //Servo 3
+        pwm.setPWM( 2, 0, map(servo05_Angle, 0, 1023, SERVO_MIN_Thumb_Center, SERVO_MAX_Thumb_Center));  //Servo 4
+        pwm.setPWM( 1, 0, map(servo06_Angle, 0, 1023, SERVO_MIN_Thumb_Rotate, SERVO_MAX_Thumb_Rotate));  //Servo 3
+        pwm.setPWM( 0, 0, map(servo07_Angle, 0, 1023, SERVO_MIN_Thumb_Left, SERVO_MAX_Thumb_Left));  //Servo 4
         
       }
 
