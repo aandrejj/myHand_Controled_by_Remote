@@ -166,24 +166,16 @@ void loop() {
                 mydata_send.count = count;
 
                 ET1.sendData();                                           // send data back to remote       
-              //if(showForm == form_ShowMeasuredData){
-
-                String btnsString = "";//"Btn"+String(mydata_remote.menuDown)+""+String(mydata_remote.menuUp)+""+String(mydata_remote.Select)+""+String(mydata_remote.toggleBottom)+""+String(mydata_remote.toggleTop)+""+"X";
-                //btnsString = btnsString +" Nav"+ String(mydata_remote.navKeyUp)+""+String(mydata_remote.navKeyDown)+""+String(mydata_remote.navKeyLeft)+""+String(mydata_remote.navKeyRight)+""+String(mydata_remote.navKeyMiddle)+""+String(mydata_remote.navKeySet)+""+String(mydata_remote.navKeyReset);
-
-                myLcd.showMeasuredDateScreen(mydata_remote.stick1_X, mydata_remote.stick2_X, mydata_remote.stick1_Y, mydata_remote.stick2_Y, btnsString, "count:"+String(count)+" mode:"+String(mode));
-                //myLcd.showMeasuredDateScreen2(leftJoystick_X,leftJoystick_Y, rightJoystick_X, rightJoystick_Y, mydata_send.index_finger_knuckle_right, mydata_send.pinky_knuckle_right, mydata_send.index_finger_fingertip,mydata_send.index_finger_knuckle_left, btnsString, "");
-              //}
 
               servo01_constrained = constrain(mydata_remote.stick1_X, 0, 1023);
               servo02_constrained = constrain(mydata_remote.stick1_Y, 0, 1023);
               servo03_constrained = constrain(mydata_remote.stick2_X, 0, 1023);
               servo04_constrained = constrain(mydata_remote.stick2_Y, 0, 1023);
 
-              servo01_constrained = map(servo01_constrained, 1023, 0, SERVO_MIN, SERVO_MAX);  //Inverted
-              servo02_constrained = map(servo02_constrained, 1023, 0, SERVO_MIN, SERVO_MAX);  //Inverted
-              servo03_constrained = map(servo03_constrained, 0, 1023, SERVO_MIN, SERVO_MAX);
-              servo04_constrained = map(servo04_constrained, 0, 1023, SERVO_MIN, SERVO_MAX);  //Inverted
+              servo01_constrained = map(servo01_constrained, 1023, 0, 0, 1023);  //Inverted
+              servo02_constrained = map(servo02_constrained, 1023, 0, 0, 1023);  //Inverted
+              servo03_constrained = map(servo03_constrained, 0, 1023, 0, 1023);
+              servo04_constrained = map(servo04_constrained, 0, 1023, 0, 1023);
 
 
               servo01_Angle = (servo01_constrained + servo02_constrained)/2;
@@ -203,8 +195,16 @@ void loop() {
                             ",   RY:"+String(mydata_remote.stick2_Y )+ ", S4:" + String(servo04_Angle) +
                             ", count:"+String(count));
               */
-             // end of receive data
+              // end of receive data
 
+              //if(showForm == form_ShowMeasuredData){
+                String btnsString = "SL:"+String(map(servo03_Angle, 0, 1023, SERVO_MIN_Pinky_Left, SERVO_MAX_Pinky_Left))+",SC:"+String(map(servo02_Angle, 0, 1023, SERVO_MIN_Pinky_Center, SERVO_MAX_Pinky_Center))+",SR:"+String(map(servo01_Angle, 0, 1023, SERVO_MIN_Pinky_Right, SERVO_MAX_Pinky_Right));
+                //String btnsString = "";//"Btn"+String(mydata_remote.menuDown)+""+String(mydata_remote.menuUp)+""+String(mydata_remote.Select)+""+String(mydata_remote.toggleBottom)+""+String(mydata_remote.toggleTop)+""+"X";
+                //btnsString = btnsString +" Nav"+ String(mydata_remote.navKeyUp)+""+String(mydata_remote.navKeyDown)+""+String(mydata_remote.navKeyLeft)+""+String(mydata_remote.navKeyRight)+""+String(mydata_remote.navKeyMiddle)+""+String(mydata_remote.navKeySet)+""+String(mydata_remote.navKeyReset);
+
+                myLcd.showMeasuredDateScreen(mydata_remote.stick1_X, mydata_remote.stick2_X, mydata_remote.stick1_Y, mydata_remote.stick2_Y, btnsString, "count:"+String(count)+" mode:"+String(mode));
+                //myLcd.showMeasuredDateScreen2(leftJoystick_X,leftJoystick_Y, rightJoystick_X, rightJoystick_Y, mydata_send.index_finger_knuckle_right, mydata_send.pinky_knuckle_right, mydata_send.index_finger_fingertip,mydata_send.index_finger_knuckle_left, btnsString, "");
+              //}
               count = count+1;                                              // update count for remote monitoring
 
             } else if(currentMillis - previousSafetyMillis > 200) {         // safeties
