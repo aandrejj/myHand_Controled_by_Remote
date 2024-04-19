@@ -15,7 +15,7 @@
 #define SERVO_MAX_Ring_Right    715
 
 #define SERVO_MIN_Ring_Center   035
-#define SERVO_MAX_Ring_Center   600
+#define SERVO_MAX_Ring_Center   615
 
 #define SERVO_MIN_Ring_Left     035
 #define SERVO_MAX_Ring_Left     715
@@ -24,7 +24,7 @@
 #define SERVO_MAX_Middle_Right  615
 
 #define SERVO_MIN_Middle_Center 135
-#define SERVO_MAX_Middle_Center 615
+#define SERVO_MAX_Middle_Center 560
 
 #define SERVO_MIN_Middle_Left   135
 #define SERVO_MAX_Middle_Left   615
@@ -32,8 +32,8 @@
 #define SERVO_MIN_Index_Right   135
 #define SERVO_MAX_Index_Right   615
 
-#define SERVO_MIN_Index_Center  135
-#define SERVO_MAX_Index_Center  615
+#define SERVO_MIN_Index_Center  185
+#define SERVO_MAX_Index_Center  580
 
 #define SERVO_MIN_Index_Left    135
 #define SERVO_MAX_Index_Left    615
