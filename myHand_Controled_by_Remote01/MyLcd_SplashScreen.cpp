@@ -14,7 +14,7 @@
 
 	FormData MyLcd_SplashScreen::showForm()
   {
-    String lcdString0= "  Remote Controller ";
+    String lcdString0= " Dexterous Hand v1.0";
 	  String lcdString1= " www.andrejRobotika ";
 	  String lcdString2= "    .blogspot.sk    ";
 	  String lcdString3= "                    ";
