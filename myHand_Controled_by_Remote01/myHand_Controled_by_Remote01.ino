@@ -162,8 +162,9 @@ void loop() {
             if(ET2.receiveData()){                                        // main data receive
                 previousSafetyMillis = currentMillis; 
 
-                mydata_send.mode = mode;
+                //mydata_send.mode = mode;
                 mydata_send.count = count;
+
 
                 ET1.sendData();                                           // send data back to remote       
 
@@ -178,15 +179,88 @@ void loop() {
               servo04_constrained = map(servo04_constrained, 0, 1023, 0, 1023);
 
 
-              servo01_Angle = (servo01_constrained + servo02_constrained)/2;
-              servo02_Angle =  servo04_constrained;
-              servo03_Angle = (servo01_constrained + (1023 - servo02_constrained))/2;
+              servo01_Angle = (servo01_constrained + servo02_constrained)/2;  //Left
+              servo02_Angle =  servo04_constrained; //Center
+              servo03_Angle = (servo01_constrained + (1023 - servo02_constrained))/2; //Right
+              servo04_Angle =  servo03_constrained;  //Tumb Rotation
+              
+              //servo04_Angle = map(servo01_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
+              //servo05_Angle = map(servo02_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
+              //servo06_Angle = map(servo03_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
+              //servo07_Angle = map(servo01_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
 
-              servo04_Angle = map(servo01_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
-              servo05_Angle = map(servo02_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
-              servo06_Angle = map(servo03_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
-              servo07_Angle = map(servo01_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
+              mode = mydata_remote.mode;
+              tmp_mode = mode;
 
+              if(tmp_mode>= 512) {
+                switch5Down = 0; 
+                tmp_mode = tmp_mode - 512;
+              } else {
+                switch5Down = 1;
+              }
+
+              if(tmp_mode>= 256) {
+                switch4Down = 0; 
+                tmp_mode = tmp_mode - 256;
+              } else {
+                switch4Down = 1;
+              }
+
+              if(tmp_mode>= 128) {
+                switch3Down = 0; 
+                tmp_mode = tmp_mode - 128;
+              } else {
+                switch3Down = 1;
+              }
+
+              if(tmp_mode>= 64) {
+                switch2Down = 0; 
+                tmp_mode = tmp_mode - 64;
+              } else {
+                switch2Down = 1;
+              }
+
+              if(tmp_mode>= 32) {
+                switch1Down = 0; 
+                tmp_mode = tmp_mode - 32;
+              } else {
+                switch1Down = 1;
+              }
+
+              if(tmp_mode>= 16) {
+                switch5Up = 0; 
+                tmp_mode = tmp_mode - 16;
+              } else {
+                switch5Up = 1;
+              }
+
+              if(tmp_mode>= 8) {
+                switch4Up = 0; 
+                tmp_mode = tmp_mode - 8;
+              } else {
+                switch4Up = 1;
+              }
+
+              if(tmp_mode>= 4) {
+                switch3Up = 0; 
+                tmp_mode = tmp_mode - 4;
+              } else {
+                switch3Up = 1;
+              }
+
+              if(tmp_mode>= 2) {
+                switch2Up = 0; 
+                tmp_mode = tmp_mode - 2;
+              } else {
+                switch2Up = 1;
+              }
+
+              if(tmp_mode>= 1) {
+                switch1Up = 0; 
+                tmp_mode = tmp_mode - 1;
+              } else {
+                switch1Up = 1;
+              }
 
               /*
               Serial.println(   "LX:"+String(mydata_remote.stick1_X)+ ", S1:" + String(servo01_Angle) +
@@ -198,9 +272,15 @@ void loop() {
               // end of receive data
 
               //if(showForm == form_ShowMeasuredData){
-                String btnsString = "SL:"+String(map(servo03_Angle, 0, 1023, SERVO_MIN_Middle_Left, SERVO_MAX_Middle_Left))+",SC:"+String(map(servo02_Angle, 0, 1023, SERVO_MAX_Middle_Center, SERVO_MIN_Middle_Center))+",SR:"+String(map(servo01_Angle, 0, 1023, SERVO_MIN_Middle_Right, SERVO_MAX_Middle_Right));
-                //String btnsString = "";//"Btn"+String(mydata_remote.menuDown)+""+String(mydata_remote.menuUp)+""+String(mydata_remote.Select)+""+String(mydata_remote.toggleBottom)+""+String(mydata_remote.toggleTop)+""+"X";
+                String btnsString = "L"+String(map(servo01_Angle, 0, 1023, SERVO_MIN_Thumb_Left, SERVO_MAX_Thumb_Left))+",C"+String(map(servo02_Angle, 0, 1023, SERVO_MIN_Thumb_Center, SERVO_MAX_Thumb_Center))+",R"+String(map(servo04_Angle, 0, 1023, SERVO_MIN_Thumb_Right, SERVO_MAX_Thumb_Right))+",T"+map(servo03_Angle, 0, 1023, SERVO_MIN_Thumb_Rotate, SERVO_MAX_Thumb_Rotate);
+                
+                //String btnsString = "SL:"+String(map(servo03_Angle, 0, 1023, SERVO_MIN_Index_Left, SERVO_MAX_Index_Left))+",SC:"+String(map(servo02_Angle, 0, 1023, SERVO_MAX_Index_Center, SERVO_MIN_Index_Center))+",SR:"+String(map(servo01_Angle, 0, 1023, SERVO_MIN_Index_Right, SERVO_MAX_Index_Right));
+                //String btnsString = "SL:"+String(map(servo03_Angle, 0, 1023, SERVO_MIN_Middle_Left, SERVO_MAX_Middle_Left))+",SC:"+String(map(servo02_Angle, 0, 1023, SERVO_MAX_Middle_Center, SERVO_MIN_Middle_Center))+",SR:"+String(map(servo01_Angle, 0, 1023, SERVO_MIN_Middle_Right, SERVO_MAX_Middle_Right));
+                //String btnsString = "Btn"+String(mydata_remote.menuDown)+""+String(mydata_remote.menuUp)+""+String(mydata_remote.Select)+""+String(mydata_remote.toggleBottom)+""+String(mydata_remote.toggleTop)+""+"X";
                 //btnsString = btnsString +" Nav"+ String(mydata_remote.navKeyUp)+""+String(mydata_remote.navKeyDown)+""+String(mydata_remote.navKeyLeft)+""+String(mydata_remote.navKeyRight)+""+String(mydata_remote.navKeyMiddle)+""+String(mydata_remote.navKeySet)+""+String(mydata_remote.navKeyReset);
+
+                //String btnsString = "SwU"+String(switch1Up)+String(switch2Up)+String(switch3Up)+""+String(switch4Up)+String(switch5Up)+" SwD"+ String(switch1Down)+""+String(switch2Down)+""+String(switch3Down)+""+String(switch4Down)+String(switch5Down);
+
 
                 myLcd.showMeasuredDateScreen(mydata_remote.stick1_X, mydata_remote.stick2_X, mydata_remote.stick1_Y, mydata_remote.stick2_Y, btnsString, "count:"+String(count)+" mode:"+String(mode));
                 //myLcd.showMeasuredDateScreen2(leftJoystick_X,leftJoystick_Y, rightJoystick_X, rightJoystick_Y, mydata_send.index_finger_knuckle_right, mydata_send.pinky_knuckle_right, mydata_send.index_finger_fingertip,mydata_send.index_finger_knuckle_left, btnsString, "");
@@ -218,26 +298,36 @@ void loop() {
       if (currentMillis - previousServoMillis >= servoInterval) {  // start timed event for Servos  (200 ms)
         previousServoMillis = currentMillis;
         
-        pwm.setPWM(15, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Pinky_Right, SERVO_MAX_Pinky_Right));  //
-        pwm.setPWM(14, 0, map(servo02_Angle, 0, 1023, SERVO_MIN_Pinky_Center, SERVO_MAX_Pinky_Center));  //
-        pwm.setPWM(13, 0, map(servo03_Angle, 0, 1023, SERVO_MIN_Pinky_Left, SERVO_MAX_Pinky_Left));  //
+        if(switch1Up==0) {
+          pwm.setPWM(15, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Pinky_Left, SERVO_MAX_Pinky_Left));  //
+          pwm.setPWM(14, 0, map(servo02_Angle, 0, 1023, SERVO_MIN_Pinky_Center, SERVO_MAX_Pinky_Center));  //
+          pwm.setPWM(13, 0, map(servo03_Angle, 0, 1023, SERVO_MIN_Pinky_Right, SERVO_MAX_Pinky_Right));  //
+        }
 
-        pwm.setPWM(12, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Ring_Right, SERVO_MAX_Ring_Right));  //
-        pwm.setPWM(11, 0, map(servo02_Angle, 0, 1023, SERVO_MIN_Ring_Center, SERVO_MAX_Ring_Center));  //
-        pwm.setPWM(10, 0, map(servo03_Angle, 0, 1023, SERVO_MIN_Ring_Left, SERVO_MAX_Ring_Left));  //
-
-        pwm.setPWM( 9, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Middle_Right, SERVO_MAX_Middle_Right));  //
-        pwm.setPWM( 8, 0, map(servo02_Angle, 0, 1023, SERVO_MAX_Middle_Center, SERVO_MIN_Middle_Center));  //Inverted here
-        pwm.setPWM( 7, 0, map(servo03_Angle, 0, 1023, SERVO_MIN_Middle_Left, SERVO_MAX_Middle_Left));  //
-
-        pwm.setPWM( 6, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Index_Right, SERVO_MAX_Index_Right));  //Servo 0
-        pwm.setPWM( 5, 0, map(servo02_Angle, 0, 1023, SERVO_MAX_Index_Center, SERVO_MIN_Index_Center));  //Inverted here
-        pwm.setPWM( 4, 0, map(servo03_Angle, 0, 1023, SERVO_MIN_Index_Left, SERVO_MAX_Index_Left));  //Servo 2
-
-        pwm.setPWM( 3, 0, map(servo04_Angle, 0, 1023, SERVO_MIN_Thumb_Right, SERVO_MAX_Thumb_Right));  //Servo 3
-        pwm.setPWM( 2, 0, map(servo05_Angle, 0, 1023, SERVO_MIN_Thumb_Center, SERVO_MAX_Thumb_Center));  //Servo 4
-        pwm.setPWM( 1, 0, map(servo06_Angle, 0, 1023, SERVO_MIN_Thumb_Rotate, SERVO_MAX_Thumb_Rotate));  //Servo 3
-        pwm.setPWM( 0, 0, map(servo07_Angle, 0, 1023, SERVO_MIN_Thumb_Left, SERVO_MAX_Thumb_Left));  //Servo 4
+        if(switch2Up==0) {
+          pwm.setPWM(12, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Ring_Left, SERVO_MAX_Ring_Left));  //
+          pwm.setPWM(11, 0, map(servo02_Angle, 0, 1023, SERVO_MIN_Ring_Center, SERVO_MAX_Ring_Center));  //
+          pwm.setPWM(10, 0, map(servo03_Angle, 0, 1023, SERVO_MIN_Ring_Right, SERVO_MAX_Ring_Right));  //
+        }
+        
+        if(switch3Up==0) {
+          pwm.setPWM( 9, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Middle_Left, SERVO_MAX_Middle_Left));  //
+          pwm.setPWM( 8, 0, map(servo02_Angle, 0, 1023, SERVO_MAX_Middle_Center, SERVO_MIN_Middle_Center));  //Inverted here
+          pwm.setPWM( 7, 0, map(servo03_Angle, 0, 1023, SERVO_MIN_Middle_Right, SERVO_MAX_Middle_Right));  //
+        }
+        
+        if(switch4Up==0) {
+          pwm.setPWM( 6, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Index_Left, SERVO_MAX_Index_Left));  //Servo 0
+          pwm.setPWM( 5, 0, map(servo02_Angle, 0, 1023, SERVO_MAX_Index_Center, SERVO_MIN_Index_Center));  //Inverted here
+          pwm.setPWM( 4, 0, map(servo03_Angle, 0, 1023, SERVO_MIN_Index_Right, SERVO_MAX_Index_Right));  //Servo 2
+        }
+        
+        if(switch5Up==0) {
+          pwm.setPWM( 3, 0, map(servo03_Angle, 0, 1023, SERVO_MAX_Thumb_Left, SERVO_MIN_Thumb_Left));  //Servo 3
+          pwm.setPWM( 2, 0, map(servo02_Angle, 0, 1023, SERVO_MIN_Thumb_Center, SERVO_MAX_Thumb_Center));  //Servo 4
+          pwm.setPWM( 1, 0, map(servo04_Angle, 0, 1023, SERVO_MIN_Thumb_Rotate, SERVO_MAX_Thumb_Rotate));  //Servo 3
+          pwm.setPWM( 0, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Thumb_Right, SERVO_MAX_Thumb_Right));  //Servo 4
+        }
         
       }
 

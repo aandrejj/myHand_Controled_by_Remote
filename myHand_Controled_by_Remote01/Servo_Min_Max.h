@@ -42,7 +42,7 @@
 #define SERVO_MAX_Thumb_Right   615
 
 #define SERVO_MIN_Thumb_Center  135
-#define SERVO_MAX_Thumb_Center  615
+#define SERVO_MAX_Thumb_Center  505
 
 #define SERVO_MIN_Thumb_Rotate  135
 #define SERVO_MAX_Thumb_Rotate  615
