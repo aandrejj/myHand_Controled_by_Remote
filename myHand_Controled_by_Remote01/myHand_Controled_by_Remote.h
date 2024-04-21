@@ -32,11 +32,11 @@ bool switch2Up;
 bool switch3Up;
 bool switch4Up;
 bool switch5Up;
-//bool switch6Up;
+bool switch6Up;
 
 bool switch1Down;
 bool switch2Down;
 bool switch3Down;
 bool switch4Down;
 bool switch5Down;
-//bool switch6Down;
+bool switch6Down;
