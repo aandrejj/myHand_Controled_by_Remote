@@ -24,6 +24,14 @@ struct RECEIVE_DATA_STRUCTURE{
     int16_t stick2_X;
     int16_t stick2_Y;
     bool    stick2_Btn;
+
+    int16_t stick3_X;
+    int16_t stick3_Y;
+    bool    stick3_Btn;
+
+    int16_t stick4_X;
+    int16_t stick4_Y;
+    bool    stick4_Btn;
 };
 
 struct SEND_DATA_STRUCTURE{
