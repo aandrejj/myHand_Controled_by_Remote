@@ -214,39 +214,53 @@ void loop() {
               mode = mydata_remote.mode;
               tmp_mode = mode;
 
-              if(tmp_mode>= 512) {
+              if(tmp_mode>= 2048) {
+                switch6Down = 0; 
+                tmp_mode = tmp_mode - 2048;
+              } else {
+                switch6Down = 1;
+              }
+
+              if(tmp_mode>= 1024) {
                 switch5Down = 0; 
-                tmp_mode = tmp_mode - 512;
+                tmp_mode = tmp_mode - 1024;
               } else {
                 switch5Down = 1;
               }
 
-              if(tmp_mode>= 256) {
+              if(tmp_mode>= 512) {
                 switch4Down = 0; 
-                tmp_mode = tmp_mode - 256;
+                tmp_mode = tmp_mode - 512;
               } else {
                 switch4Down = 1;
               }
 
-              if(tmp_mode>= 128) {
+              if(tmp_mode>= 256) {
                 switch3Down = 0; 
-                tmp_mode = tmp_mode - 128;
+                tmp_mode = tmp_mode - 256;
               } else {
                 switch3Down = 1;
               }
 
-              if(tmp_mode>= 64) {
+              if(tmp_mode>= 128) {
                 switch2Down = 0; 
-                tmp_mode = tmp_mode - 64;
+                tmp_mode = tmp_mode - 128;
               } else {
                 switch2Down = 1;
               }
 
-              if(tmp_mode>= 32) {
+              if(tmp_mode>= 64) {
                 switch1Down = 0; 
-                tmp_mode = tmp_mode - 32;
+                tmp_mode = tmp_mode - 64;
               } else {
                 switch1Down = 1;
+              }
+
+              if(tmp_mode>= 32) {
+                switch6Up = 0; 
+                tmp_mode = tmp_mode - 32;
+              } else {
+                switch6Up = 1;
               }
 
               if(tmp_mode>= 16) {
