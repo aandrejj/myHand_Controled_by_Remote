@@ -1,5 +1,6 @@
 #include "EasyTransfer.h"
 #include "SoftwareSerial.h"
+#include "SCServo.h"
 
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
@@ -25,6 +26,8 @@ EasyTransfer ET1;   // send serial
 EasyTransfer ET2;   // rec serial
 
 //https://robojax.com/learn/arduino/?vid=robojax_PCA9685-V1
+
+SCServo SERVO;      //Declare a case of SCServo to control the Feetechs
 
 int axis1;
 int axis2;
