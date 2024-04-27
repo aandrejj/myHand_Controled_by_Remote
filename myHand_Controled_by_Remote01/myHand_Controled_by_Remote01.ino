@@ -61,6 +61,10 @@ uint16_t servo01_constrained;
 uint16_t servo02_constrained;
 uint16_t servo03_constrained;
 uint16_t servo04_constrained;
+uint16_t servo05_constrained;
+uint16_t servo06_constrained;
+uint16_t servo07_constrained;
+uint16_t servo08_constrained;
 
 uint16_t servo01_Angle;
 uint16_t servo02_Angle;
@@ -70,6 +74,7 @@ uint16_t servo04_Angle;
 uint16_t servo05_Angle;
 uint16_t servo06_Angle;
 uint16_t servo07_Angle;
+uint16_t servo08_Angle;
 
 SEND_DATA_STRUCTURE mydata_send;
 RECEIVE_DATA_STRUCTURE mydata_remote;
@@ -84,6 +89,8 @@ long previousSafetyMillis;
 
 int state; // BT state
 int previous_state;
+
+int wrist_pos[] = {512, 512, 512};     // default to centre
 
 byte showForm;
 
