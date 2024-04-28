@@ -1,5 +1,6 @@
 #include "EasyTransfer.h"
 #include "SoftwareSerial.h"
+#include "SCServo.h"
 
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
@@ -25,6 +26,8 @@ EasyTransfer ET1;   // send serial
 EasyTransfer ET2;   // rec serial
 
 //https://robojax.com/learn/arduino/?vid=robojax_PCA9685-V1
+
+SCServo SERVO;      //Declare a case of SCServo to control the Feetechs
 
 int axis1;
 int axis2;
@@ -58,6 +61,10 @@ uint16_t servo01_constrained;
 uint16_t servo02_constrained;
 uint16_t servo03_constrained;
 uint16_t servo04_constrained;
+uint16_t servo05_constrained;
+uint16_t servo06_constrained;
+uint16_t servo07_constrained;
+uint16_t servo08_constrained;
 
 uint16_t servo01_Angle;
 uint16_t servo02_Angle;
@@ -67,6 +74,7 @@ uint16_t servo04_Angle;
 uint16_t servo05_Angle;
 uint16_t servo06_Angle;
 uint16_t servo07_Angle;
+uint16_t servo08_Angle;
 
 SEND_DATA_STRUCTURE mydata_send;
 RECEIVE_DATA_STRUCTURE mydata_remote;
@@ -81,6 +89,8 @@ long previousSafetyMillis;
 
 int state; // BT state
 int previous_state;
+
+int wrist_pos[] = {512, 512, 512};     // default to centre
 
 byte showForm;
 
@@ -173,58 +183,84 @@ void loop() {
               servo03_constrained = constrain(mydata_remote.stick2_X, 0, 1023);
               servo04_constrained = constrain(mydata_remote.stick2_Y, 0, 1023);
 
+              servo05_constrained = constrain(mydata_remote.stick3_X, 0, 1023);
+              servo06_constrained = constrain(mydata_remote.stick3_Y, 0, 1023);
+              servo07_constrained = constrain(mydata_remote.stick4_X, 0, 1023);
+              servo08_constrained = constrain(mydata_remote.stick4_Y, 0, 1023);
+
               servo01_constrained = map(servo01_constrained, 1023, 0, 0, 1023);  //Inverted
               servo02_constrained = map(servo02_constrained, 1023, 0, 0, 1023);  //Inverted
               servo03_constrained = map(servo03_constrained, 0, 1023, 0, 1023);
               servo04_constrained = map(servo04_constrained, 0, 1023, 0, 1023);
 
+              servo05_constrained = map(servo05_constrained, 1023, 0, 0, 1023);  //Inverted
+              servo06_constrained = map(servo06_constrained, 1023, 0, 0, 1023);  //Inverted
+              servo07_constrained = map(servo07_constrained, 0, 1023, 0, 1023);
+              servo08_constrained = map(servo08_constrained, 0, 1023, 0, 1023);
 
               servo01_Angle = (servo01_constrained + servo02_constrained)/2;  //Left
               servo02_Angle =  servo04_constrained; //Center
               servo03_Angle = (servo01_constrained + (1023 - servo02_constrained))/2; //Right
               servo04_Angle =  servo03_constrained;  //Tumb Rotation
               
-              //servo04_Angle = map(servo01_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
-              //servo05_Angle = map(servo02_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
-              //servo06_Angle = map(servo03_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
-              //servo07_Angle = map(servo01_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
+             //angles[16] = constrain(angles[16], 70, 110);  //servo05_Angle
+             //angles[17] = constrain(angles[17], 25, 65);   //servo06_Angle
+             //angles[18] = constrain(angles[18], 70, 115);  //servo07_Angle
+              servo05_Angle = map(servo05_Angle, 0, 1023, 70, 110);
+              servo06_Angle = map(servo06_Angle, 0, 1023, 25, 65);
+              servo07_Angle = map(servo07_Angle, 0, 1023, 70, 115);
+              servo08_Angle = map(servo08_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
 
               mode = mydata_remote.mode;
               tmp_mode = mode;
 
-              if(tmp_mode>= 512) {
+              if(tmp_mode>= 2048) {
+                switch6Down = 0; 
+                tmp_mode = tmp_mode - 2048;
+              } else {
+                switch6Down = 1;
+              }
+
+              if(tmp_mode>= 1024) {
                 switch5Down = 0; 
-                tmp_mode = tmp_mode - 512;
+                tmp_mode = tmp_mode - 1024;
               } else {
                 switch5Down = 1;
               }
 
-              if(tmp_mode>= 256) {
+              if(tmp_mode>= 512) {
                 switch4Down = 0; 
-                tmp_mode = tmp_mode - 256;
+                tmp_mode = tmp_mode - 512;
               } else {
                 switch4Down = 1;
               }
 
-              if(tmp_mode>= 128) {
+              if(tmp_mode>= 256) {
                 switch3Down = 0; 
-                tmp_mode = tmp_mode - 128;
+                tmp_mode = tmp_mode - 256;
               } else {
                 switch3Down = 1;
               }
 
-              if(tmp_mode>= 64) {
+              if(tmp_mode>= 128) {
                 switch2Down = 0; 
-                tmp_mode = tmp_mode - 64;
+                tmp_mode = tmp_mode - 128;
               } else {
                 switch2Down = 1;
               }
 
-              if(tmp_mode>= 32) {
+              if(tmp_mode>= 64) {
                 switch1Down = 0; 
-                tmp_mode = tmp_mode - 32;
+                tmp_mode = tmp_mode - 64;
               } else {
                 switch1Down = 1;
+              }
+
+              if(tmp_mode>= 32) {
+                switch6Up = 0; 
+                tmp_mode = tmp_mode - 32;
+              } else {
+                switch6Up = 1;
               }
 
               if(tmp_mode>= 16) {
