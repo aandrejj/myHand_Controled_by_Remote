@@ -25,7 +25,8 @@
 //#define Vcc 12
 #define ENABLE 8
 
-int tmp_mode;
+int16_t tmp_mode;
+int16_t previous_mode;
 
 bool switch1Up;
 bool switch2Up;

@@ -36,7 +36,7 @@ int axis4;
 int axis5;
 int axis6;
 
-int mode;
+int16_t mode;
 int count;
 int noDataCount;
 
@@ -138,7 +138,8 @@ void setup() {
   pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
 	Serial.println("setup: Servos on PCA9685  attached");
   delay(20);
-  
+  tmp_mode = 0;
+  previous_mode = tmp_mode;  
 }
 //----------------------------BT_to_serial_prepare-----------------------------------------
 void BT_to_serial_prepare() {
@@ -211,9 +212,12 @@ void loop() {
               servo07_Angle = map(servo07_Angle, 0, 1023, 70, 115);
               servo08_Angle = map(servo08_Angle, 0, 1023, SERVO_MIN, SERVO_MAX);
 
+              previous_mode = tmp_mode;
+
               mode = mydata_remote.mode;
               tmp_mode = mode;
 
+/*
               if(tmp_mode>= 2048) {
                 switch6Down = 0; 
                 tmp_mode = tmp_mode - 2048;
@@ -255,7 +259,7 @@ void loop() {
               } else {
                 switch1Down = 1;
               }
-
+*/
               if(tmp_mode>= 32) {
                 switch6Up = 0; 
                 tmp_mode = tmp_mode - 32;
@@ -298,13 +302,10 @@ void loop() {
                 switch1Up = 1;
               }
 
-              /*
-              Serial.println(   "LX:"+String(mydata_remote.stick1_X)+ ", S1:" + String(servo01_Angle) +
-                            ",   LY:"+String(mydata_remote.stick1_Y       )+ ", S2:" + String(servo02_Angle) +
-                            ",   RX:"+String(mydata_remote.stick2_X    )+ ", S3:" + String(servo03_Angle) +
-                            ",   RY:"+String(mydata_remote.stick2_Y )+ ", S4:" + String(servo04_Angle) +
-                            ", count:"+String(count));
-              */
+              if(previous_mode != tmp_mode) {
+                Serial.println("New  tmp_mode ="+String(tmp_mode));
+              }
+
               // end of receive data
 
               //if(showForm == form_ShowMeasuredData){
@@ -312,13 +313,12 @@ void loop() {
                 
                 //String btnsString = "SL:"+String(map(servo03_Angle, 0, 1023, SERVO_MIN_Index_Left, SERVO_MAX_Index_Left))+",SC:"+String(map(servo02_Angle, 0, 1023, SERVO_MAX_Index_Center, SERVO_MIN_Index_Center))+",SR:"+String(map(servo01_Angle, 0, 1023, SERVO_MIN_Index_Right, SERVO_MAX_Index_Right));
                 //String btnsString = "SL:"+String(map(servo03_Angle, 0, 1023, SERVO_MIN_Middle_Left, SERVO_MAX_Middle_Left))+",SC:"+String(map(servo02_Angle, 0, 1023, SERVO_MAX_Middle_Center, SERVO_MIN_Middle_Center))+",SR:"+String(map(servo01_Angle, 0, 1023, SERVO_MIN_Middle_Right, SERVO_MAX_Middle_Right));
-                //String btnsString = "Btn"+String(mydata_remote.menuDown)+""+String(mydata_remote.menuUp)+""+String(mydata_remote.Select)+""+String(mydata_remote.toggleBottom)+""+String(mydata_remote.toggleTop)+""+"X";
                 //btnsString = btnsString +" Nav"+ String(mydata_remote.navKeyUp)+""+String(mydata_remote.navKeyDown)+""+String(mydata_remote.navKeyLeft)+""+String(mydata_remote.navKeyRight)+""+String(mydata_remote.navKeyMiddle)+""+String(mydata_remote.navKeySet)+""+String(mydata_remote.navKeyReset);
 
                 //String btnsString = "SwU"+String(switch1Up)+String(switch2Up)+String(switch3Up)+""+String(switch4Up)+String(switch5Up)+" SwD"+ String(switch1Down)+""+String(switch2Down)+""+String(switch3Down)+""+String(switch4Down)+String(switch5Down);
 
 
-                myLcd.showMeasuredDateScreen(mydata_remote.stick1_X, mydata_remote.stick2_X, mydata_remote.stick1_Y, mydata_remote.stick2_Y, btnsString, "count:"+String(count)+" mode:"+String(mode));
+                myLcd.showMeasuredDateScreen(mydata_remote.stick1_X, mydata_remote.stick2_X, mydata_remote.stick1_Y, mydata_remote.stick2_Y, btnsString, "count:"+String(count)+" mode:"+String(mode)+" ");
                 //myLcd.showMeasuredDateScreen2(leftJoystick_X,leftJoystick_Y, rightJoystick_X, rightJoystick_Y, mydata_send.index_finger_knuckle_right, mydata_send.pinky_knuckle_right, mydata_send.index_finger_fingertip,mydata_send.index_finger_knuckle_left, btnsString, "");
               //}
               count = count+1;                                              // update count for remote monitoring
@@ -365,7 +365,42 @@ void loop() {
           pwm.setPWM( 0, 0, map(servo01_Angle, 0, 1023, SERVO_MIN_Thumb_Right, SERVO_MAX_Thumb_Right));  //Servo 4
         }
         
-      }
+        if(switch6Up==0) {
+        //if(1==2) { 
+          // angles[16] is wrist pitch, range 70 to 110, centre 90
+          // angles[17] is wrist yaw, range 25 to 65, centre 45
+          // angles[18] is wrist rotation around long axis of forearm, range 70 to 110, centre 90
+          
+          //angles[16] = constrain(angles[16], 70, 110);  //servo05_Angle
+          //angles[17] = constrain(angles[17], 25, 65);   //servo06_Angle
+          //angles[18] = constrain(angles[18], 70, 115);  //servo07_Angle
 
+          
+          //Wrist is sum and difference of two angles and z rotation coincident with long axis of forearm
+          wrist_pos[0] = map(((servo05_Angle - 90) - (servo06_Angle - 45)), 40, -40, 100, 724);     // wrist pitch
+          wrist_pos[1] = map(((servo05_Angle - 90) + (servo06_Angle - 45)), -40, 40, 300, 924);     // wrist yaw
+          wrist_pos[2] = map(servo07_Angle, 70, 115, 400, 800);                                  // wrist rotation
+
+          //Serial.print("Wrist\n\r");
+          SERVO.WritePos(1, wrist_pos[0], 200, 400);               // bottom outer
+          SERVO.WritePos(2, wrist_pos[1], 200, 400);               // top outer
+          //SERVO.WritePos(3, wrist_pos[2], 50, 200);               // 3 wrist rotation
+
+          /*
+          Serial.print(angles[16]);
+          Serial.print(" ");
+          Serial.print(angles[17]);
+          Serial.print(" ");
+          Serial.print(angles[18]);
+          Serial.print(" ");
+          Serial.print(wrist_pos[0]);
+          Serial.print(" ");
+          Serial.print(wrist_pos[1]);
+          Serial.print(" ");
+          Serial.print(wrist_pos[2]);
+          Serial.print("\n\r");
+          */
+        }
+      }
 }
 
