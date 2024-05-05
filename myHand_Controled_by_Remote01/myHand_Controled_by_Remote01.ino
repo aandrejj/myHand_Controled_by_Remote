@@ -196,8 +196,8 @@ void loop() {
               servo03_constrained = constrain(mydata_remote.stick2_X, 0, 1023);
               servo04_constrained = constrain(mydata_remote.stick2_Y, 0, 1023);
 
-              servo05_constrained = constrain(mydata_remote.stick3_X, 0, 1023);
-              servo06_constrained = constrain(mydata_remote.stick3_Y, 0, 1023);
+              servo05_constrained = constrain((mydata_remote.stick3_X - 200), 0, 1023);
+              servo06_constrained = constrain((mydata_remote.stick3_Y + 300), 0, 1023);
               servo07_constrained = constrain(mydata_remote.stick4_X, 0, 1023);
               servo08_constrained = constrain(mydata_remote.stick4_Y, 0, 1023);
 
